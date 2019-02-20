@@ -9,8 +9,8 @@ daysInMonth = 28
 target = 4577213.3
 target = 10000000
 
-df = pd.read_excel('data.xlsx')
-df['target'] = np.cumsum(df['Producción'])
+df = pd.read_excel('data.xls')
+df['target'] = np.cumsum(df['Monto'])
 
 X = np.array([[i+1] for i in range(df.shape[0])])
 model = LinearRegression()
@@ -31,13 +31,5 @@ ls_predicted = r2_score(model.predict(X),df['target'])**(.5)
 print(ls_predicted)
 probabilityOfReaching = (target-predictedLastDay)/ls_predicted
 probabilityOfReaching = stats.norm.cdf(probabilityOfReaching)
-
-print(model.coef_)
-
-ls_errors = [abs(real-predicted) for real,predicted in zip(df['target'],model.predict(X))]
-plt.hist(ls_errors,normed=True,bins=5)
-print(ls_errors)
 plt.show()
-# plt.show()
-
 print('Probability of reaching 100% minimun: '+str(round(probabilityOfReaching,4)*100)+'%')
