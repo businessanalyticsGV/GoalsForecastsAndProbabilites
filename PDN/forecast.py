@@ -1,5 +1,4 @@
 #### 0.- PRELIMINARIES
-
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
@@ -22,7 +21,6 @@ lr.fit(X,df['target'])
 daysInMonth = 28
 month = 2
 year = 2019
-target = 4577213.3
 
 frame = pd.DataFrame()
 dates = pd.date_range(start='01/'+str(month)+'/'+str(year),
@@ -39,6 +37,5 @@ frame['to_powerbi'] = np.where(frame['target'] > 0,frame['target'],frame['predic
 
 #### III.- FINAL SCORE AND STORING FRAME
 r2 = r2_score(df['target'],lr.predict([[i+1] for i in range(df.shape[0])]))
-
 print(r2)
-print(frame)
+frame.to_csv('PDN_forecast.csv')
