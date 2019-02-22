@@ -8,9 +8,9 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 
 #### I.- TRAINING MODEL
-df = pd.read_excel('data.xls')
+df = pd.read_excel('PDN/data.xlsx')
 df['Fechaa'] = pd.to_datetime(df['Fechaa'], format = '%d/%m/%Y')
-df['target'] = np.cumsum(df['Monto'])
+df['target'] = np.cumsum(df['Producción'])
 df = df[['Fechaa','target']]
 
 lr = LinearRegression()
@@ -18,9 +18,11 @@ X = [[i+1] for i in range(df.shape[0])]
 lr.fit(X,df['target'])
 
 #### II.- POWER BI DATA SET INCLUDING BOTH REAL AND PREDICTED VALUES
-daysInMonth = 28
-month = 2
-year = 2019
+path = 'C:/Users/alexisalvarez/OneDrive - Grupo Vidanta/UPDATE/Work/01. 26Dic18 - Metas PowerBI/Enero2019/_Forecast/GoalsForecastsAndProbabilites'
+df_dates = pd.read_csv(path+'/datesUpdate.csv')
+daysInMonth = df_dates.iloc[0][0]
+month = df_dates.iloc[0][1]
+year = df_dates.iloc[0][2]
 
 frame = pd.DataFrame()
 dates = pd.date_range(start='01/'+str(month)+'/'+str(year),
@@ -38,4 +40,4 @@ frame['to_powerbi'] = np.where(frame['target'] > 0,frame['target'],frame['predic
 #### III.- FINAL SCORE AND STORING FRAME
 r2 = r2_score(df['target'],lr.predict([[i+1] for i in range(df.shape[0])]))
 print(r2)
-frame.to_csv('Cuotas_forecast.csv')
+frame.to_csv('PDN/PDN_forecast.csv', index = False)
