@@ -1,43 +1,44 @@
+#### 0.- PRELIMINARIES
+
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score,mean_squared_error
 from scipy import stats
 import matplotlib.pyplot as plt
+from datetime import datetime
 
-daysInMonth = 28
-target = 4577213.3
-target = 10000000
-
+#### I.- TRAINING MODEL
 df = pd.read_excel('data.xlsx')
+df['Fechaa'] = pd.to_datetime(df['Fechaa'], format = '%d/%m/%Y')
 df['target'] = np.cumsum(df['Producción'])
+df = df[['Fechaa','target']]
 
-X = np.array([[i+1] for i in range(df.shape[0])])
-model = LinearRegression()
-model.fit(X,df['target'])
+lr = LinearRegression()
+X = [[i+1] for i in range(df.shape[0])]
+lr.fit(X,df['target'])
 
-y_hat = np.array([[i+1] for i in range(df.shape[0]+1,daysInMonth+1)])
-y_hat = list(model.predict(y_hat))
-y_toShow = [i for i in df['target']]+y_hat
+#### II.- POWER BI DATA SET INCLUDING BOTH REAL AND PREDICTED VALUES
+daysInMonth = 28
+month = 2
+year = 2019
+target = 4577213.3
 
-plt.plot(y_toShow)
+frame = pd.DataFrame()
+dates = pd.date_range(start='01/'+str(month)+'/'+str(year),
+                        end=str(daysInMonth)+'/'+str(month)+'/'+str(year))
+dates = [date for date in dates]
+frame['Fechaa'] = dates
+frame['month'] = [d.month for d in frame['Fechaa']]
+frame = frame[frame['month'] == month]
+frame = frame.drop(columns = ['month'], axis = 1)
+frame = frame.merge(df, how = 'left', on = ['Fechaa'])
+frame['target'] = np.where(pd.isnull(frame['target']),np.nan,frame['target'])
+frame['predicted'] = lr.predict([[i+1] for i in range(frame.shape[0])])
+frame['to_powerbi'] = np.where(frame['target'] > 0,frame['target'],frame['predicted'])
 
-predictedLastDay = model.predict([[daysInMonth]])[0]
+#### III.- FINAL SCORE AND STORING FRAME
+r2 = r2_score(df['target'],lr.predict([[i+1] for i in range(df.shape[0])]))
 
-# ls_predicted = model.predict([[i+1] for i in range(daysInMonth)])
-# ls_predicted = np.std(ls_predicted)
-
-ls_predicted = r2_score(model.predict(X),df['target'])**(.5)
-print(ls_predicted)
-probabilityOfReaching = (target-predictedLastDay)/ls_predicted
-probabilityOfReaching = stats.norm.cdf(probabilityOfReaching)
-
-print(model.coef_)
-
-ls_errors = [abs(real-predicted) for real,predicted in zip(df['target'],model.predict(X))]
-plt.hist(ls_errors,normed=True,bins=5)
-print(ls_errors)
-plt.show()
-# plt.show()
-
-print('Probability of reaching 100% minimun: '+str(round(probabilityOfReaching,4)*100)+'%')
+print(r2)
+print(frame)
