@@ -1,4 +1,9 @@
 from CuotasUso import Cuotas_forecast
 from PDN import PDN_forecast
+from VentaNueva import VentaNueva_forecast
+from Upgrades import Upgrades_forecast
+
 Cuotas_forecast
 PDN_forecast
+VentaNueva_forecast
+Upgrades_forecast
