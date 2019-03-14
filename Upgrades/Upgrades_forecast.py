@@ -39,5 +39,7 @@ frame['to_powerbi'] = np.where(frame['target'] > 0,frame['target'],frame['predic
 
 #### III.- FINAL SCORE AND STORING FRAME
 r2 = r2_score(df['target'],lr.predict([[i+1] for i in range(df.shape[0])]))
-print(r2)
+def r_squareds():
+    return(r2)
+# print(r2)
 frame.to_csv('Upgrades/Upgrades_forecast.csv', index = False)

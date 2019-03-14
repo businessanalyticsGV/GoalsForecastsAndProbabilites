@@ -2,6 +2,8 @@
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.pipeline import make_pipeline
 from sklearn.metrics import r2_score,mean_squared_error
 from scipy import stats
 import matplotlib.pyplot as plt
@@ -13,6 +15,7 @@ df['Fechaa'] = pd.to_datetime(df['Fechaa'], format = '%d/%m/%Y')
 df['target'] = np.cumsum(df['Monto'])
 df = df[['Fechaa','target']]
 
+# lr = make_pipeline(PolynomialFeatures(degree=5),LinearRegression(fit_intercept=False))
 lr = LinearRegression()
 X = [[i+1] for i in range(df.shape[0])]
 lr.fit(X,df['target'])
@@ -39,5 +42,7 @@ frame['to_powerbi'] = np.where(frame['target'] > 0,frame['target'],frame['predic
 
 #### III.- FINAL SCORE AND STORING FRAME
 r2 = r2_score(df['target'],lr.predict([[i+1] for i in range(df.shape[0])]))
-print(r2)
+def r_squareds():
+    return(r2)
+# print(r2)
 frame.to_csv('VentaNueva/VentaNueva_forecast.csv', index = False)
