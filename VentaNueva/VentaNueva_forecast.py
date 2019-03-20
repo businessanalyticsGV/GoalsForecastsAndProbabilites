@@ -15,8 +15,8 @@ df['Fechaa'] = pd.to_datetime(df['Fechaa'], format = '%d/%m/%Y')
 df['target'] = np.cumsum(df['Monto'])
 df = df[['Fechaa','target']]
 
-# lr = make_pipeline(PolynomialFeatures(degree=5),LinearRegression(fit_intercept=False))
-lr = LinearRegression()
+lr = make_pipeline(PolynomialFeatures(degree=2),LinearRegression(fit_intercept=False))
+# lr = LinearRegression()
 X = [[i+1] for i in range(df.shape[0])]
 lr.fit(X,df['target'])
 

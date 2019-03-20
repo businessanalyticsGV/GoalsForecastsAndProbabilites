@@ -12,7 +12,7 @@ r2_vts = VentaNueva_forecast
 ls = []
 for i in [mod for mod in globals() if mod.startswith('r2_')]:
     ls.append((i,globals()[i].r_squareds()))
-    
+
 df = pd.DataFrame(ls, columns = ['Model','r2'])
-df.to_csv('r2.csv')
+df.to_csv('r2.csv', index = False)
 print(df)
