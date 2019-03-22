@@ -6,6 +6,7 @@ import pandas as pd
 import datetime
 from datetime import datetime as dt ## CONVERTING INTEGERS TO DATES
 from datetime import timedelta as td
+import datetime
 
 path = '//nvocorpfileshare/inventory management/FRANCISCO JARAMILLO/REPORTES/Diario-INNSIST vs MATRIX/Base/2019/Marzo/'
 ls_files = [file for file in os.listdir(path) if file[-len('.xlsx'):] == '.xlsx']
@@ -35,9 +36,13 @@ for files in ls_files:
     frame['Occupancy'] = (frame['Real']-frame['UC'])/frame['Inv Real']
     # frame = frame[llave+['Occupancy']]
     date = files[-11:][:6]
-    frame['PhotoDate'] = str(date[-2:])+'/'+str(date[:4][-2:])+'/20'+str(date[:2])
-    
+    frame['PhotoDate'] = str(date[-2:])+'-'+str(date[:4][-2:])+'-20'+str(date[:2])
+    frame['weekday'] = datetime.datetime(int(date[:2]),
+                                         int(date[:4][-2:]),
+                                         int(date[-2:])).weekday()
+
     df = pd.concat([df,frame])
-    
+
+df.rename(columns = {'Photodate':'Fechaa','Occupancy':'target'},inplace = True)  
 df.to_excel('data.xlsx', index = False)
 # df_prueba.to_excel('prueba.xlsx', index = False)
